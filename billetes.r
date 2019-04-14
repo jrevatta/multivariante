@@ -1,0 +1,38 @@
+library(foreign)
+billetes1<-read.spss("D:/estadistica/rprojects/gorriones/billetes.sav")
+billetes1<-data.frame(billetes1)
+n <- 15
+muestra <- sample(1:nrow(billetes1), size = n, replace = FALSE)
+dmuestra <-billetes1[muestra,]
+media <-colMeans(dmuestra[1:6])
+covara <-cov(dmuestra[1:6])
+correla <-cor(dmuestra[1:6])
+mediaA <-colMeans(subset(dmuestra, X7 == "verdadero")[1:6])
+covaA <-cov(subset(dmuestra, X7 == "verdadero")[1:6])
+mediaB <-colMeans(subset(dmuestra, X7 == "falso")[1:6])
+covaB <-cov(subset(dmuestra, X7 == "falso")[1:6])
+estanda <-as.data.frame(scale(dmuestra[1:6]))
+dista.dmuestra <-dist(estanda)
+mahalan <- mahalanobis(dmuestra[1:6], colMeans(dmuestra[1:6]), cov(dmuestra[1:6]))
+dismahalann <-sqrt(mahalan)
+order(dismahalann)
+ordirmahala <- order(mahalanobis(dmuestra[1:6], colMeans(dmuestra[1:6]), cov(dmuestra[1:6])), decreasing = TRUE)
+tr<-sum(diag(covaA))
+gene<-det(covaA)
+
+boxplot(dmuestra[,1], xlab="X1", ylab="Numero de billetes")
+boxplot(dmuestra[,2], xlab="X2", ylab="Numero de billetes")
+boxplot(dmuestra[,3], xlab="X3", ylab="Numero de billetes")
+
+boxplot(dmuestra[,4]~dmuestra[,6],xlab="X4", ylab="X6")
+
+boxplot(dmuestra[,5]~dmuestra[,6],xlab="X5", ylab="X6")
+
+#plot(dmuestra$x6, dmuestra$x1)
+library("car")
+library("carData")
+scatterplotMatrix(dmuestra[1:6])
+mahalazz<-mahalanobis(dmuestra[1:6], colMeans(dmuestra[1:6]), cov(dmuestra[1:6]))
+boxplot(mahalazz, ylab="distancias de Mahalanobis")
+dismahalann<-matrix(dismahalann)
+boxplot(dismahalann~dmuestra[,6], xlab="Situación veracidad", ylab="Distancia de mahalanobis")
