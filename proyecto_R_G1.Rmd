@@ -1,0 +1,189 @@
+---
+title: " Proyecto Grupal Análisis Multivariados"
+autor: "Jorge Alvarado | Oscar Esquivel"
+output:
+  html_document:
+    toc: TRUE
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+### Definición de variables
+
+Este proyecto trata sobre la bd de billetes.sav 
+Que tiene tal y cual variables.
+Se cargan los datos ...
+
+```{r}
+library(foreign)
+billetes1<-read.spss("e:/multi/billetes.sav")
+billete1<-data.frame(billetes1)
+summary(billetes1)
+# x1: Longitud del billete de banco
+# x2: altura del billete medido a la izquierda
+# x3: Altura del billete de banco medido a la derecha
+# x4: distancia del marco interno al borde inferior
+# x5: distancia del marco interno al borde superior
+# x6: longitud de la diagonal
+# cualitativa: situacion del billete.
+```
+
+### Calculamos medidas de centralizaciòn, dispersiòn y correlaciòn.
+
+```{r}
+media <-colMeans(billete1[1:6])
+media
+covara <-cov(billete1[1:6])
+covara
+correla <-cor(billete1[1:6])
+correla
+```
+
+### calculamos medidas de grupo de billetes verdaderos y falsos
+
+```{r}
+mediaA <-colMeans(subset(billete1, X7 == "verdadero")[1:6])
+mediaA
+covaA <-cov(subset(billete1, X7 == "verdadero")[1:6])
+covaA
+correlaA <-cor(subset(billete1, X7 == "verdadero")[1:6])
+correlaA
+```
+```{r}
+mediaB <-colMeans(subset(billete1, X7 == "falso")[1:6])
+mediaB
+covaB <-cov(subset(billete1, X7 == "falso")[1:6])
+covaB
+correlaB <-cor(subset(billete1, X7 == "falso")[1:6])
+correlaB
+```
+
+### medidas globales de variabilidad
+```{r}
+tr<-sum(diag(covara))
+# tr traza
+tr
+gene<-det(covara)
+gene
+
+```
+### distancias
+
+```{r}
+estanda <-as.data.frame(scale(billete1[1:6]))
+dista.billete1 <-dist(estanda)
+head(dista.billete1)
+
+```
+##### Cuadrado de las distancias de Mahalanobis 
+
+```{r}
+mahalan <- mahalanobis(billete1[1:6], colMeans(billete1[1:6]), cov(billete1[1:6]))
+head(mahalan)
+```
+
+##### Se obtienen las distancias de Mahalanobis
+
+```{r}
+dismahalann <-sqrt(mahalan)
+order(dismahalann)
+ordirmahala <- order(mahalanobis(billete1[1:6], colMeans(billete1[1:6]), cov(billete1[1:6])), decreasing = TRUE)
+head(ordirmahala)
+
+
+```
+### graficos de cajas
+
+```{r}
+# x1: Longitud del billete de banco
+# x2: altura del billete medido a la izquierda
+# x3: Altura del billete de banco medido a la derecha
+# x4: distancia del marco interno al borde inferior
+# x5: distancia del marco interno al borde superior
+# x6: longitud de la diagonal
+# cualitativa: situacion del billete.
+boxplot(billete1[,1], xlab="X1", ylab="Longitud del billete de banco")
+boxplot(billete1[,2], xlab="X2", ylab="altura del billete medido a la izquierda")
+boxplot(billete1[,3], xlab="X3", ylab="Altura del billete de banco medido a la derecha")
+boxplot(billete1[,4], xlab="X4", ylab="distancia del marco interno al borde inferior")
+boxplot(billete1[,5], xlab="X5", ylab="distancia del marco interno al borde superior")
+boxplot(billete1[,6], xlab="X6", ylab="longitud de la diagonal")
+
+boxplot(billete1[,1]~billete1[,7],xlab="X1", ylab="x7")
+boxplot(billete1[,2]~billete1[,7],xlab="X2", ylab="X7")
+boxplot(billete1[,3]~billete1[,7],xlab="X3", ylab="X7")
+boxplot(billete1[,4]~billete1[,7],xlab="X4", ylab="X7")
+boxplot(billete1[,5]~billete1[,7],xlab="X5", ylab="X7")
+boxplot(billete1[,6]~billete1[,7],xlab="X6", ylab="X7")
+
+```
+
+
+### Evaluación de multinormalidad por el método QQPlot
+
+```{r}
+#muestra 1
+n <- 15
+muestra <- sample(1:nrow(billete1), size = n, replace = FALSE)
+dmuestra <-billete1[muestra,]
+qqnorm(dmuestra$X1)
+qqline(dmuestra$X1, col='red')
+
+
+#muestra 2
+n <- 15
+muestra <- sample(1:nrow(billete1), size = n, replace = FALSE)
+dmuestra <-billete1[muestra,]
+qqnorm(dmuestra$X2)
+qqline(dmuestra$X2, col='green')
+
+
+#muestra 3
+n <- 15
+muestra <- sample(1:nrow(billete1), size = n, replace = FALSE)
+dmuestra <-billete1[muestra,]
+qqnorm(dmuestra$X3)
+qqline(dmuestra$X3, col='blue')
+
+
+#muestra 4
+n <- 15
+muestra <- sample(1:nrow(billete1), size = n, replace = FALSE)
+dmuestra <-billete1[muestra,]
+qqnorm(dmuestra$X4)
+qqline(dmuestra$X4, col='yellow')
+
+
+#muestra 5
+n <- 15
+muestra <- sample(1:nrow(billete1), size = n, replace = FALSE)
+dmuestra <-billete1[muestra,]
+qqnorm(dmuestra$X5)
+qqline(dmuestra$X5, col='pink')
+
+#muestra 6
+n <- 15
+muestra <- sample(1:nrow(billete1), size = n, replace = FALSE)
+dmuestra <-billete1[muestra,]
+qqnorm(dmuestra$X6)
+qqline(dmuestra$X6, col='purple')
+
+
+
+```
+
+El grafico scaterplot muestra todas las variables.
+```{r}
+library("car")
+library("carData")
+scatterplotMatrix(billete1[1:6])
+```
+
+
+
+
+
+
+
